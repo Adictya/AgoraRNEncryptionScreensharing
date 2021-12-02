@@ -10,6 +10,7 @@ import RtcEngine, {
   RtcLocalView,
   RtcRemoteView,
   VideoRenderMode,
+  EncryptionConfig,
 } from 'react-native-agora';
 
 import requestCameraAndAudioPermission from './components/Permission';
@@ -37,8 +38,8 @@ export default class App extends Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      appId: YourAppId,
-      token: YourToken,
+      appId: '1e6816ded05149088f32daa1c0d19456',
+      token: '',
       channelName: 'channel-x',
       joinSucceed: false,
       peerIds: [],
@@ -63,6 +64,11 @@ export default class App extends Component<Props, State> {
     const { appId } = this.state;
     this._engine = await RtcEngine.create(appId);
     await this._engine.enableVideo();
+    // const encConf = new EncryptionConfig();
+    await this._engine.enableEncryption(true, {
+      encryptionKey: 'Xp2r5u8x',
+      encryptionMode: 1,
+    });
 
     this._engine.addListener('Warning', (warn) => {
       console.log('Warning', warn);
@@ -102,6 +108,23 @@ export default class App extends Component<Props, State> {
         joinSucceed: true,
       });
     });
+
+    this._engine.addListener('UserMuteVideo', (uid, muted) => {
+      console.log('User muted video', uid, muted);
+      // Set state variable to true
+      this.setState({
+        joinSucceed: true,
+      });
+    });
+
+    this._engine.addListener('UserMuteAudio', (uid, muted) => {
+      console.log('User muted audio', uid, muted);
+      // Set state variable to true
+      this.setState({
+        joinSucceed: true,
+      });
+    });
+
   };
 
   /**
